@@ -1,0 +1,88 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, TOPICS, EXPERIENCE, EDUCATION, type Topic } from '../consts';
+const topicIds = Object.keys(TOPICS) as Topic[];
+const arc = [
+  { year: '2020', text: 'Working with data and dashboards, I built version control for Tableau workbooks.' },
+  { year: '2022', text: 'Went deeper on the foundations with data engineering coursework.' },
+  { year: '2024', text: 'Rebuilt ML from first principles (linear regression), learned CI/CD from zero, and tried AI agents for risk and assurance.' },
+  { year: '2026', text: 'Started learning in public: model architectures by hand, a framework per lesson on leading AI, and a privacy hackathon.' },
+];
+---
+<Base title="About" description={`Who ${SITE.name} is, what drives the work, and how to get in touch.`}>
+  <div class="narrow">
+    <p class="eyebrow">About</p>
+    <h1>Hi, I'm {SITE.short}. I like to <span class="hl">see how things work</span>.</h1>
+    <p class="lede">
+      I'm someone who isn't satisfied until I can see how a thing really works. With AI, that means two things:
+      understanding the models themselves, down to every matrix, and understanding how organisations can adopt
+      them well. I learn both in public, and turn what I learn into material other people can use.
+    </p>
+    {(SITE.role || SITE.location) && <p class="muted">{[SITE.role, SITE.location].filter(Boolean).join(' · ')}</p>}
+
+    <h2>What I care about</h2>
+    <ul class="topics">
+      {topicIds.map((t) => (
+        <li data-t={t}><span class="topic-dot" /><div><strong>{TOPICS[t].label}</strong><br /><span class="muted">{TOPICS[t].blurb}</span></div></li>
+      ))}
+    </ul>
+
+    <h2>What drives the work</h2>
+    <p>
+      I was learning about attention, and wanted more than the equations in the paper. I wanted to see every
+      matrix, know its shape at every step, and do the multiplications myself until the forward pass clicked.
+      Sinusoidal positional encoding, giving every position its own signature, was the idea that hooked me.
+      That became <a href="https://guptaaditya95.github.io/llmbreakdown/">Let's Break It Down</a>.
+    </p>
+    <p>
+      At the same time I'm working through a course on leading AI transformation. Rather than let notes sit in a
+      notebook, I turn each lesson into a framework with a case study, in the
+      <a href="https://guptaaditya95.github.io/ai-transformation-playbook/">AI Transformation Playbook</a>.
+      If I can't explain it simply, I haven't understood it.
+    </p>
+
+    {EXPERIENCE.length > 0 && (
+      <>
+        <h2>Experience</h2>
+        <ul class="xp">
+          {EXPERIENCE.map((x) => (
+            <li><div class="top"><strong>{x.role}</strong><span class="small muted">{x.dates}</span></div><span class="muted">{x.org}</span>{x.note && <p class="small">{x.note}</p>}</li>
+          ))}
+        </ul>
+      </>
+    )}
+    {EDUCATION.length > 0 && (
+      <>
+        <h2>Education</h2>
+        <ul class="xp">{EDUCATION.map((e) => <li><strong>{e.what}</strong><br /><span class="muted">{e.where}{e.dates && ` · ${e.dates}`}</span></li>)}</ul>
+      </>
+    )}
+
+    <h2>How my interests have grown</h2>
+    <ol class="arc">
+      {arc.map((a) => <li><span class="year">{a.year}</span><span>{a.text}</span></li>)}
+    </ol>
+    <p class="small"><a href="/projects/">See every project →</a></p>
+
+    <h2>Get in touch</h2>
+    <p>
+      The best way to reach me is on <a href={SITE.links.linkedin}>LinkedIn</a>. For corrections or ideas about a
+      project, open an issue on <a href={SITE.links.github}>GitHub</a>. And if you want to learn alongside me, the
+      <a href="/community/">community page</a> has the ways to join.
+    </p>
+  </div>
+</Base>
+<style>
+  .lede { font-size: 1.15rem; margin: 0.5rem 0 1rem; }
+  .topics { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
+  .topics li { display: flex; gap: 0.75rem; align-items: baseline; }
+  .xp { list-style: none; padding: 0; margin: 0; }
+  .xp li { padding: 0.75rem 0; border-bottom: 1.5px dashed var(--border); }
+  .xp p { margin: 0.3rem 0 0; }
+  .top { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .arc { list-style: none; padding: 0; margin: 0.8rem 0 0; border-left: 2px dashed var(--border); }
+  .arc li { display: flex; gap: 1rem; padding: 0.45rem 0 0.45rem 1rem; position: relative; }
+  .arc li::before { content: ''; position: absolute; left: -7px; top: 0.95rem; width: 12px; height: 12px; border-radius: 50% 40% 55% 45%; background: var(--hl); border: 1.5px solid var(--text); }
+  .year { font-family: var(--hand); font-size: 1.45rem; line-height: 1.1; color: var(--accent); flex: none; width: 2.6rem; }
+  .topics strong { font-family: var(--display); font-weight: 400; }
+</style>

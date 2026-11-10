@@ -1,0 +1,216 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import Featured from '../components/Featured.astro';
+import JoinBlock from '../components/JoinBlock.astro';
+import { SITE, PROJECTS, NOW, TOPICS, METHOD, type Topic } from '../consts';
+import { getPosts } from '../lib';
+const posts = (await getPosts()).slice(0, 3);
+const featured = PROJECTS.filter((p) => p.featured);
+const trail = [...PROJECTS].sort((a, b) => Number(b.year) - Number(a.year));
+const topicIds = Object.keys(TOPICS) as Topic[];
+const paths = [
+  { who: 'I want to understand how AI models work', go: 'Start with Attention, by hand', href: 'https://guptaaditya95.github.io/llmbreakdown/attention/', topic: 'models' },
+  { who: 'I lead a team or business adopting AI', go: 'Start with the AI Transformation Playbook', href: 'https://guptaaditya95.github.io/ai-transformation-playbook/', topic: 'leadership' },
+  { who: 'I want to learn alongside you', go: 'See how to join the community', href: '/community/', topic: '' },
+];
+---
+<Base>
+  <section class="hero">
+    <div class="intro">
+      <p class="eyebrow">hi, I'm {SITE.short}</p>
+      <h1>I learn AI by <span class="hl">breaking it down</span>, then share what I learn so others can too.</h1>
+      <p class="lede">{SITE.intro}</p>
+      {(SITE.role || SITE.location) && <p class="small muted">{[SITE.role, SITE.location].filter(Boolean).join(' · ')}</p>}
+      <div class="cta">
+        <a class="btn primary" href="#work">See my work</a>
+        <a class="btn" href="/about/">More about me</a>
+        <a class="btn" href={SITE.links.linkedin}>LinkedIn ↗</a>
+      </div>
+    </div>
+    <aside class="start" aria-labelledby="start-h">
+      <p class="note-h" id="start-h">New here? Start with the line that fits you</p>
+      <ul>
+        {paths.map((p) => (
+          <li>
+            <a href={p.href} data-t={p.topic || undefined}>
+              <span class="who">{p.who}</span>
+              <span class="go">{p.go} →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  </section>
+
+  <section id="topics" aria-labelledby="topics-h">
+    <h2 id="topics-h">What I'm passionate about</h2>
+    <p class="section-lede">Four threads run through everything I make. Pick one to highlight the related work below.</p>
+    <div class="chips" role="group" aria-label="Filter by topic">
+      <button class="chip" data-filter="all" aria-pressed="true">Everything</button>
+      {topicIds.map((t) => (
+        <button class="chip" data-filter={t} data-t={t} aria-pressed="false">
+          <span class="topic-dot" />{TOPICS[t].label}
+        </button>
+      ))}
+    </div>
+    <p class="topic-blurb small muted" aria-live="polite">Everything I've built, newest first.</p>
+  </section>
+
+  <section id="work" aria-labelledby="work-h">
+    <h2 id="work-h">Featured work</h2>
+    <p class="section-lede">My two main projects. Both are free, open source, and growing.</p>
+    <div class="feat-grid">
+      {featured.map((p, i) => <Featured p={p} index={i} />)}
+    </div>
+  </section>
+
+  <section id="method" aria-labelledby="method-h">
+    <h2 id="method-h">How I learn</h2>
+    <p class="section-lede">Every project follows the same loop. Click a step to see it in action.</p>
+    <div class="method">
+      <ol class="steps" role="tablist" aria-label="Steps">
+        {METHOD.map((m, i) => (
+          <li>
+            <button role="tab" id={`step-${i}`} aria-controls={`panel-${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>
+              <span class="n">{i + 1}</span>{m.step}
+            </button>
+          </li>
+        ))}
+      </ol>
+      {METHOD.map((m, i) => (
+        <div class="panel card taped" role="tabpanel" id={`panel-${i}`} aria-labelledby={`step-${i}`} hidden={i !== 0}>
+          <p class="big">{m.text}</p>
+          <p class="small muted"><strong>Example:</strong> {m.example}</p>
+          <p class="small loop muted">{i < METHOD.length - 1 ? `Next: ${METHOD[i + 1].step.toLowerCase()} →` : '…and the feedback picks the next hard thing. ↺'}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="trail" aria-labelledby="trail-h">
+    <h2 id="trail-h">Experiments along the way</h2>
+    <p class="section-lede">Everything on my GitHub, from early data tooling to model breakdowns. You can see where my interests went.</p>
+    <ol class="trail">
+      {trail.map((p) => (
+        <li data-topics={p.topics.join(' ')}>
+          <span class="year">{p.year}</span>
+          <div class="item">
+            <a href={p.url || p.repo}><strong>{p.name}</strong></a>
+            {p.featured && <span class="tag">Featured</span>}
+            <span class="dots">{p.topics.map((t) => <span class="topic-dot" data-t={t} title={TOPICS[t].label} />)}</span>
+            <p class="small muted">{p.tagline}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+    <p class="small"><a href="/projects/">All projects with details →</a></p>
+  </section>
+
+  <div class="two">
+    <section aria-labelledby="now-h">
+      <h2 id="now-h">What I'm doing now</h2>
+      <ul class="now">{NOW.map((n) => <li>{n}</li>)}</ul>
+    </section>
+    <section aria-labelledby="writing-h">
+      <h2 id="writing-h">Latest writing</h2>
+      {posts.length ? <PostList posts={posts} /> : <p class="muted">Nothing yet.</p>}
+      <p class="small"><a href="/blog/">All writing →</a></p>
+    </section>
+  </div>
+
+  <section id="join" aria-labelledby="join-h">
+    <h2 id="join-h">Learn with me</h2>
+    <p class="section-lede">I'm building a community of people who like to understand things properly. Here's how to be part of it.</p>
+    <JoinBlock />
+  </section>
+
+  <script is:inline define:vars={{ topics: TOPICS }}>
+    const chips = document.querySelectorAll('.chip');
+    const blurb = document.querySelector('.topic-blurb');
+    const items = document.querySelectorAll('[data-topics]');
+    function apply(f) {
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === f)));
+      blurb.textContent = f === 'all' ? "Everything I've built, newest first." : topics[f].blurb;
+      items.forEach((el) => el.classList.toggle('dim', f !== 'all' && !el.dataset.topics.split(' ').includes(f)));
+    }
+    chips.forEach((c) => c.addEventListener('click', () => apply(c.dataset.filter)));
+
+    const tabs = [...document.querySelectorAll('[role=tab]')];
+    function select(i) {
+      tabs.forEach((t, j) => {
+        t.setAttribute('aria-selected', String(i === j));
+        t.tabIndex = i === j ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = i !== j;
+      });
+    }
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', (e) => {
+        const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (!d) return;
+        e.preventDefault();
+        const n = (i + d + tabs.length) % tabs.length;
+        select(n); tabs[n].focus();
+      });
+    });
+  </script>
+</Base>
+<style>
+  .hero { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 3rem; align-items: center; padding: 2rem 0 0.5rem; }
+  @media (max-width: 760px) { .hero { grid-template-columns: 1fr; gap: 2rem; } }
+  .hero h1 { font-size: clamp(2.1rem, 5vw, 3.1rem); }
+  .hero h1 .hl { padding: 0; }
+  .lede { font-size: 1.12rem; color: var(--muted); margin: 0.9rem 0 1rem; }
+  .cta { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.4rem; }
+
+  /* sticky note */
+  .start { background: var(--hl); color: #1f3527; padding: 1.4rem 1.2rem 1.2rem; transform: rotate(1.2deg); box-shadow: 2px 10px 18px -12px rgba(40, 60, 20, 0.55); position: relative; }
+  .start::before { content: ''; position: absolute; top: -10px; left: 50%; width: 70px; height: 20px; transform: translateX(-50%) rotate(-4deg); background: rgba(255, 255, 255, 0.55); }
+  :global(:root[data-theme='dark']) .start { filter: brightness(0.92); }
+  .note-h { font-family: var(--hand); font-size: 1.7rem; line-height: 1.05; margin: 0 0 0.8rem; }
+  .start ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+  .start a { display: block; text-decoration: none; padding: 0.55rem 0.75rem; background: #fffef4; border: 1.5px solid #1f3527; border-left: 6px solid var(--dot, #1f3527); border-radius: 2px; transition: transform 0.12s; }
+  .start a:hover { transform: translateX(4px) rotate(-0.4deg); }
+  .start [data-t='models'] { --dot: #2e7d32; }
+  .start [data-t='leadership'] { --dot: #c79a00; }
+  .who { display: block; color: #1f3527; font-weight: 700; font-size: 0.95rem; }
+  .go { display: block; color: #2e7d32; font-size: 0.88rem; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+  .chip { display: inline-flex; align-items: center; gap: 0.45rem; font: inherit; font-size: 0.93rem; font-weight: 600; padding: 0.3rem 0.85rem; border-radius: 2px; border: 1.5px solid var(--text); background: var(--card); color: var(--text); cursor: pointer; box-shadow: 2px 2px 0 var(--shadow); transition: transform 0.12s; }
+  .chip:hover { transform: rotate(-1deg); }
+  .chip[aria-pressed='true'] { background: var(--hl); color: #1f3527; }
+  .topic-blurb { margin: 0.9rem 0 0; min-height: 1.5em; font-family: var(--hand); font-size: 1.45rem; line-height: 1.2; color: var(--accent); }
+
+  .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); gap: 1.6rem; margin-top: 1.2rem; }
+  :global(.dim) { opacity: 0.3; filter: grayscale(0.6); }
+
+  .method { display: grid; grid-template-columns: minmax(0, 16rem) minmax(0, 1fr); gap: 1.2rem; align-items: start; margin-top: 1rem; }
+  @media (max-width: 680px) { .method { grid-template-columns: 1fr; } }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; }
+  .steps button { width: 100%; text-align: left; font: inherit; font-size: 0.95rem; font-weight: 600; padding: 0.5rem 0.75rem; border-radius: 2px; border: 1.5px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 0.65rem; }
+  .steps button:hover { border-color: var(--text); }
+  .steps button[aria-selected='true'] { border-color: var(--text); background: var(--hl); color: #1f3527; box-shadow: 3px 3px 0 var(--shadow); }
+  .n { display: inline-grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: 50%; border: 1.5px solid currentColor; font-family: var(--hand); font-size: 1.4rem; line-height: 1; flex: none; }
+  .panel { min-height: 100%; }
+  .big { font-family: var(--display); font-size: 1.3rem; line-height: 1.35; margin: 0.3rem 0 0.8rem; }
+  .loop { font-family: var(--hand); font-size: 1.4rem; line-height: 1.1; }
+  .panel p:last-child { margin-bottom: 0; }
+
+  .trail { list-style: none; margin: 1rem 0 0; padding: 0; border-left: 2px dashed var(--border); }
+  .trail li { display: flex; gap: 1rem; padding: 0.55rem 0 0.55rem 1.1rem; position: relative; transition: opacity 0.2s; }
+  .trail li::before { content: ''; position: absolute; left: -7px; top: 1.05rem; width: 12px; height: 12px; border-radius: 50% 40% 55% 45%; background: var(--hl); border: 1.5px solid var(--text); }
+  .year { font-family: var(--hand); font-size: 1.45rem; line-height: 1.1; color: var(--accent); flex: none; width: 2.6rem; }
+  .item a { color: var(--text); text-decoration: none; }
+  .item a strong { font-family: var(--display); font-weight: 400; font-size: 1.08rem; }
+  .item a:hover strong { background: linear-gradient(transparent 55%, var(--hl-soft) 55%); }
+  .item p { margin: 0; }
+  .dots { display: inline-flex; gap: 0.25rem; margin-left: 0.4rem; vertical-align: middle; }
+  .item .tag { margin-left: 0.4rem; font-size: 0.7rem; }
+
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: 0 2.5rem; }
+  .now { list-style: none; padding: 0; margin: 0.6rem 0 0; }
+  .now li { margin: 0.5rem 0; padding-left: 1.8rem; position: relative; }
+  .now li::before { content: '☐'; position: absolute; left: 0; top: -0.05rem; font-size: 1.15rem; color: var(--accent); }
+</style>

@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import JoinBlock from '../components/JoinBlock.astro';
+const asks = [
+  { q: 'What should I break down next?', a: 'GPT-2, ViT, Mamba, diffusion… tell me which architecture you want worked by hand.', href: 'https://github.com/GuptaAditya95/llmbreakdown/issues/new?title=Break%20down%3A%20' },
+  { q: 'Did a framework work in your organisation?', a: "Share how you used a playbook framework, or where it didn't fit.", href: 'https://github.com/GuptaAditya95/ai-transformation-playbook/issues/new' },
+  { q: 'Want to build a breakdown yourself?', a: 'The PLAYBOOK documents exactly how each breakdown is made. Use it and open a PR.', href: 'https://github.com/GuptaAditya95/llmbreakdown/blob/main/PLAYBOOK.md' },
+];
+---
+<Base title="Community" description="Learn AI alongside Aditya: star, follow, suggest the next breakdown, or contribute.">
+  <p class="eyebrow">Community</p>
+  <h1>Learn <span class="hl">with</span> me</h1>
+  <p class="section-lede">
+    This is a community for people who like to understand things properly: learners working through model
+    architectures, and leaders figuring out how to bring AI into their organisations. You don't need to be an
+    expert. Curiosity is enough.
+  </p>
+
+  <h2>Join in one click</h2>
+  <JoinBlock />
+
+  <h2>Help shape what comes next</h2>
+  <div class="asks">
+    {asks.map((x) => (
+      <a class="card ask" href={x.href}>
+        <strong>{x.q}</strong>
+        <span class="small muted">{x.a}</span>
+        <span class="small go">Go →</span>
+      </a>
+    ))}
+  </div>
+
+  <h2>How to get the most out of the projects</h2>
+  <ol class="how">
+    <li><strong>Learning the models?</strong> Do <a href="https://guptaaditya95.github.io/llmbreakdown/attention/">Attention, by hand</a> first, with the practice panels open. Then BERT reads as a small edit to the same picture.</li>
+    <li><strong>Leading AI adoption?</strong> Read the <a href="https://guptaaditya95.github.io/ai-transformation-playbook/">playbook</a> lessons in order. The case study follows one company, so each framework builds on the last.</li>
+    <li><strong>Share what you made.</strong> Your own notes, worksheets or vivid versions of an idea are welcome. Tag me on LinkedIn.</li>
+  </ol>
+</Base>
+<style>
+  .asks { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: 0.9rem; }
+  .ask { display: flex; flex-direction: column; gap: 0.35rem; text-decoration: none; color: var(--text); transition: border-color 0.15s, transform 0.15s; }
+  .ask:hover { border-color: var(--accent); transform: rotate(-0.6deg) translateY(-2px); }
+  .ask strong { font-family: var(--display); font-weight: 400; font-size: 1.12rem; }
+  .go { color: var(--accent); margin-top: auto; padding-top: 0.4rem; font-family: var(--hand); font-size: 1.4rem; line-height: 1; }
+  .asks { margin-top: 1rem; }
+  .how { padding-left: 1.2rem; max-width: 42rem; }
+  .how li { margin: 0.6rem 0; }
+</style>

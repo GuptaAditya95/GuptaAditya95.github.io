@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { KINDS } from '../consts';
+interface Props { posts: CollectionEntry<'blog'>[]; showKind?: boolean }
+const { posts, showKind = true } = Astro.props;
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+<ul>
+  {posts.map((p) => (
+    <li>
+      <div class="meta small muted">
+        <time class="d" datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>
+        {showKind && <span class="kind">{KINDS[p.data.kind].label}</span>}
+      </div>
+      <a href={`/blog/${p.id}/`}>{p.data.title}</a>
+      <p class="muted small">{p.data.description}</p>
+    </li>
+  ))}
+</ul>
+<style>
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 1rem 0; border-bottom: 1.5px dashed var(--border); }
+  li:last-child { border-bottom: 0; }
+  .meta { display: flex; gap: 0.75rem; align-items: baseline; }
+  a { font-family: var(--display); color: var(--text); text-decoration: none; font-size: 1.15rem; }
+  a:hover { background: linear-gradient(transparent 55%, var(--hl-soft) 55%); }
+  p { margin: 0.2rem 0 0; }
+  .d { font-family: var(--mono); font-size: 0.82rem; }
+</style>

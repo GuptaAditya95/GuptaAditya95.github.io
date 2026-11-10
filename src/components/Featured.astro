@@ -1,0 +1,46 @@
+---
+import { TOPICS, type Project } from '../consts';
+interface Props { p: Project; index: number }
+const { p, index } = Astro.props;
+---
+<article class={`feat card taped ${index % 2 ? "alt" : ""}`} data-topics={p.topics.join(' ')}>
+  <div class="head">
+    <span class="num">0{index + 1}</span>
+    <div class="topics">
+      {p.topics.map((t) => <span class="t" data-t={t}><span class="topic-dot" />{TOPICS[t].label}</span>)}
+    </div>
+  </div>
+  <h3>{p.name}</h3>
+  <p class="tagline">{p.tagline}</p>
+  <p>{p.summary}</p>
+  {p.forWhom && <p class="small muted"><strong>Who it's for:</strong> {p.forWhom}</p>}
+  {p.parts && (
+    <details open={index === 0}>
+      <summary>What's inside ({p.parts.length})</summary>
+      <ol>
+        {p.parts.map((x) => (
+          <li><a href={x.href}>{x.label}</a> <span class="small muted">· {x.note}</span></li>
+        ))}
+      </ol>
+    </details>
+  )}
+  <div class="actions">
+    {p.url && <a class="btn primary" href={p.url}>Open the site ↗</a>}
+    {p.repo && <a class="btn" href={p.repo}>View on GitHub</a>}
+  </div>
+</article>
+<style>
+  .feat { display: flex; flex-direction: column; gap: 0.25rem; transition: opacity 0.2s, transform 0.2s; }
+  .head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+  .num { font-family: var(--hand); color: var(--accent); font-size: 1.9rem; line-height: 1; }
+  .topics { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .t { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; color: var(--muted); }
+  h3 { font-size: 1.55rem; margin: 0.3rem 0 0; }
+  .tagline { margin: 0 0 0.6rem; color: var(--muted); font-style: italic; }
+  p { margin: 0 0 0.6rem; }
+  details { border-top: 1.5px dashed var(--border); padding-top: 0.6rem; margin-top: 0.25rem; }
+  summary { cursor: pointer; font-family: var(--hand); font-size: 1.45rem; line-height: 1.2; color: var(--accent); }
+  ol { margin: 0.5rem 0 0; padding-left: 1.2rem; }
+  li { margin: 0.25rem 0; }
+  .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: auto; padding-top: 0.9rem; }
+</style>

@@ -1,0 +1,41 @@
+---
+import { SITE } from '../consts';
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/projects/', label: 'Projects' },
+  { href: '/about/', label: 'About' },
+  { href: '/blog/', label: 'Writing' },
+  { href: '/community/', label: 'Community' },
+];
+const active = (href: string) => path.startsWith(href);
+---
+<header class="wrap">
+  <a class="name" href="/"><span class="mark" aria-hidden="true">AG</span>{SITE.name}</a>
+  <nav aria-label="Main">
+    {nav.map((n) => <a href={n.href} aria-current={active(n.href) ? 'page' : undefined}>{n.label}</a>)}
+    <button class="theme" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.5 5.5 0 0 1-7.54-7.54A9 9 0 0 0 12 3z"/></svg>
+    </button>
+  </nav>
+</header>
+<script is:inline>
+  document.querySelector('header .theme').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('theme', root.dataset.theme); } catch {}
+  });
+</script>
+<style>
+  header { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; padding-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+  .name { font-weight: 700; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 0.6rem; }
+  .name { font-family: var(--display); font-weight: 400; font-size: 1.15rem; }
+  .mark { display: inline-grid; place-items: center; width: 2.3rem; height: 2.1rem; border-radius: 4px; background: var(--hl); color: #1f3527; font-family: var(--hand); font-size: 1.55rem; line-height: 1; transform: rotate(-4deg); box-shadow: 2px 2px 0 var(--shadow); }
+  nav { display: flex; gap: 1.1rem; align-items: center; flex-wrap: wrap; }
+  nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+  nav a:hover, nav a[aria-current='page'] { color: var(--text); }
+  nav a { font-weight: 600; padding: 0 0.15rem; }
+  nav a[aria-current='page'] { background: linear-gradient(100deg, transparent 2%, var(--hl-soft) 6%, var(--hl-soft) 94%, transparent 98%) 0 85% / 100% 55% no-repeat; }
+  .theme { background: var(--card); border: 1.5px solid var(--border); color: var(--muted); border-radius: 3px; width: 2rem; height: 2rem; display: grid; place-items: center; cursor: pointer; }
+  .theme:hover { color: var(--text); }
+</style>

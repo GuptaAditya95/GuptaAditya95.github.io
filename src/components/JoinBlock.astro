@@ -1,0 +1,49 @@
+---
+import { PLAYBOOK_EMAIL_FORM, SITE } from '../consts';
+---
+<div class="join">
+  <div class="ways">
+    <a class="way card" href="https://github.com/GuptaAditya95/llmbreakdown">
+      <span class="ic" aria-hidden="true">1</span>
+      <strong>Star a project</strong>
+      <span class="small muted">It helps other learners find the breakdowns, and tells me to keep going.</span>
+    </a>
+    <a class="way card" href="https://github.com/GuptaAditya95/llmbreakdown/issues/new">
+      <span class="ic" aria-hidden="true">2</span>
+      <strong>Send a correction or idea</strong>
+      <span class="small muted">Spotted a mistake? Want a model broken down next? Open an issue.</span>
+    </a>
+    <a class="way card" href={SITE.links.linkedin}>
+      <span class="ic" aria-hidden="true">3</span>
+      <strong>Connect on LinkedIn</strong>
+      <span class="small muted">Say hi, share what you're learning, or talk AI transformation.</span>
+    </a>
+  </div>
+  <form class="sub card taped" action={PLAYBOOK_EMAIL_FORM} method="post" target="_blank">
+    <div>
+      <strong class="h">Get new playbook lessons by email</strong>
+      <p class="small muted">One email when a new framework is published. Unsubscribe any time.</p>
+    </div>
+    <div class="row">
+      <input type="email" name="email" placeholder="you@example.com" required aria-label="Email address" />
+      <button class="btn primary" type="submit">Subscribe</button>
+    </div>
+    <p class="small muted fine">Prefer a reader? <a href="https://guptaaditya95.github.io/ai-transformation-playbook/feed.xml">Playbook RSS</a> · <a href="/rss.xml">This site's RSS</a></p>
+  </form>
+</div>
+<style>
+  .ways { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: 0.9rem; }
+  .way { display: flex; flex-direction: column; gap: 0.3rem; text-decoration: none; color: var(--text); transition: border-color 0.15s, transform 0.15s; }
+  .way:hover { border-color: var(--accent); transform: rotate(-0.6deg) translateY(-2px); }
+  .way strong { font-family: var(--display); font-weight: 400; font-size: 1.15rem; }
+  .ic { display: inline-grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); font-family: var(--hand); font-size: 1.6rem; line-height: 1; margin-bottom: 0.3rem; transform: rotate(-6deg); }
+  .sub { margin-top: 1.6rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: center; justify-content: space-between; }
+  .sub p { margin: 0.15rem 0 0; }
+  .row { display: flex; gap: 0.5rem; flex: 1 1 18rem; max-width: 26rem; min-width: 0; }
+  .sub > div:first-child { flex: 1 1 16rem; min-width: 0; }
+  .h { font-family: var(--display); font-weight: 400; font-size: 1.15rem; }
+  input { flex: 1; min-width: 0; width: 100%; font: inherit; font-family: var(--mono); font-size: 0.95rem; padding: 0.45rem 0.2rem; border: 0; border-bottom: 1.5px solid var(--text); border-radius: 0; background: transparent; color: var(--text); }
+  input:focus { outline: none; border-bottom-color: var(--accent); background: var(--accent-soft); }
+  button { cursor: pointer; font: inherit; }
+  .fine { flex-basis: 100%; }
+</style>

@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import Featured from '../components/Featured.astro';
+import { PROJECTS, TOPICS, type Topic } from '../consts';
+const featured = PROJECTS.filter((p) => p.featured);
+const rest = PROJECTS.filter((p) => !p.featured);
+const topicIds = Object.keys(TOPICS) as Topic[];
+---
+<Base title="Projects" description="Model breakdowns, AI transformation frameworks, and experiments by Aditya Gupta.">
+  <p class="eyebrow">Projects</p>
+  <h1>Things I've built to learn</h1>
+  <p class="section-lede">Every project here started as something I wanted to understand. Filter by topic, or open any of them.</p>
+  <div class="chips" role="group" aria-label="Filter by topic">
+    <button class="chip" data-filter="all" aria-pressed="true">All</button>
+    {topicIds.map((t) => <button class="chip" data-filter={t} data-t={t} aria-pressed="false"><span class="topic-dot" />{TOPICS[t].label}</button>)}
+  </div>
+
+  <h2>Featured</h2>
+  <div class="grid big">{featured.map((p, i) => <Featured p={p} index={i} />)}</div>
+
+  <h2>Experiments and earlier work</h2>
+  <div class="grid">
+    {rest.map((p) => (
+      <a class="card mini" href={p.url || p.repo} data-topics={p.topics.join(' ')}>
+        <div class="top"><strong>{p.name}</strong><span class="small muted">{p.year}</span></div>
+        <p class="small muted tl">{p.tagline}</p>
+        <p class="small">{p.summary}</p>
+        <div class="tags">{p.topics.map((t) => <span class="tag" data-t={t}><span class="topic-dot" /> {TOPICS[t].label}</span>)}</div>
+      </a>
+    ))}
+  </div>
+  <script is:inline>
+    const chips = document.querySelectorAll('.chip');
+    chips.forEach((c) => c.addEventListener('click', () => {
+      const f = c.dataset.filter;
+      chips.forEach((x) => x.setAttribute('aria-pressed', String(x === c)));
+      document.querySelectorAll('[data-topics]').forEach((el) => {
+        el.hidden = f !== 'all' && !el.dataset.topics.split(' ').includes(f);
+      });
+    }));
+  </script>
+</Base>
+<style>
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip { display: inline-flex; align-items: center; gap: 0.45rem; font: inherit; font-size: 0.93rem; font-weight: 600; padding: 0.3rem 0.85rem; border-radius: 2px; border: 1.5px solid var(--text); background: var(--card); color: var(--text); cursor: pointer; box-shadow: 2px 2px 0 var(--shadow); }
+  .chip[aria-pressed='true'] { background: var(--hl); color: #1f3527; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(17rem, 100%), 1fr)); gap: 1.4rem; margin-top: 1.2rem; }
+  .grid.big { grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); }
+  [hidden] { display: none !important; }
+  .mini { text-decoration: none; color: var(--text); display: flex; flex-direction: column; transition: border-color 0.15s, transform 0.15s; }
+  .mini:hover { border-color: var(--accent); transform: rotate(-0.6deg) translateY(-2px); }
+  .mini strong { font-family: var(--display); font-weight: 400; font-size: 1.12rem; }
+  .mini .top .muted { font-family: var(--hand); font-size: 1.3rem; line-height: 1; color: var(--accent); }
+  .top { display: flex; justify-content: space-between; gap: 0.75rem; align-items: baseline; }
+  .tl { margin: 0.15rem 0 0.5rem; font-style: italic; }
+  .mini p { margin-top: 0; }
+  .mini .tags { margin-top: auto; }
+  .tag { display: inline-flex; align-items: center; gap: 0.3rem; }
+</style>

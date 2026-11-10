@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import { KINDS, type Kind } from '../../consts';
+import { getPosts, slugify } from '../../lib';
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
+const kinds = Object.keys(KINDS) as Kind[];
+---
+<Base title="Writing" description="Writing, thoughts and experiments.">
+  <h1>Writing</h1>
+  <p class="muted">What I learned, quick thoughts, and experiments.</p>
+  <div class="filters">
+    <button data-kind="all" aria-pressed="true">All</button>
+    {kinds.map((k) => <button data-kind={k} aria-pressed="false">{KINDS[k].label}</button>)}
+  </div>
+  <div id="posts"><PostList posts={posts} /></div>
+  {tags.length > 0 && (
+    <>
+      <h2>Topics</h2>
+      <div class="tags">{tags.map((t) => <a class="tag" href={`/tags/${slugify(t)}/`}>{t}</a>)}</div>
+    </>
+  )}
+  <script is:inline define:vars={{ kindsById: Object.fromEntries(posts.map((p) => [`/blog/${p.id}/`, p.data.kind])) }}>
+    const items = document.querySelectorAll('#posts li');
+    document.querySelectorAll('.filters button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const k = btn.dataset.kind;
+        document.querySelectorAll('.filters button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        items.forEach((li) => {
+          const href = li.querySelector('a').getAttribute('href');
+          li.hidden = k !== 'all' && kindsById[href] !== k;
+        });
+      });
+    });
+  </script>
+</Base>
+<style>
+  .filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1.25rem 0 0.5rem; }
+  button { font: inherit; font-size: 0.92rem; font-weight: 600; padding: 0.25rem 0.8rem; border-radius: 2px; border: 1.5px solid var(--text); background: var(--card); color: var(--text); cursor: pointer; box-shadow: 2px 2px 0 var(--shadow); }
+  button[aria-pressed='true'] { background: var(--hl); color: #1f3527; }
+</style>
